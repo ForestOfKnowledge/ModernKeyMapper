@@ -3,6 +3,10 @@
   <head>
     <title>Keyboard Mapping Example</title>
     <meta charset="utf-8" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <h1>Keyboard Mapping Example</h1>
@@ -48,8 +52,68 @@
         combinations and actions.
       </li>
     </ol>
+    <h2>JavaScript Code:</h2>
+    <pre><code class="language-javascript">const keyboardMapper = new KeyboardMapper();
+
+      keyboardMapper.mapCombination("ctrl+a", () => {
+        console.log("Ctrl+A pressed");
+      });
+
+      keyboardMapper.mapCombination("shift+enter", () => {
+        console.log("Shift+Enter pressed");
+      });
+
+      keyboardMapper.mapCombination("ctrl+shift+d", () => {
+        console.log("Ctrl+Shift+D pressed");
+      });
+
+      keyboardMapper.mapCombination("escape", () => {
+        console.log("Escape pressed.");
+      });
+
+      keyboardMapper.mapCombination("0", () => {
+        console.log("0 pressed. Changing scope to default.");
+        // Change the scope (optional)
+        keyboardMapper.setScope("default");
+      });
+
+      keyboardMapper.mapCombination("1", () => {
+        console.log("1 pressed. Changing scope to scope1.");
+        // Change the scope (optional)
+        keyboardMapper.setScope("scope1");
+      });
+
+      keyboardMapper.mapCombination("ctrl+s", () => {
+        console.log("Ctrl+S");
+      });
+
+      keyboardMapper.mapCombination("2", () => {
+        console.log("2 pressed. Changing scope to scope2.");
+        // Change the scope (optional)
+        keyboardMapper.setScope("scope2");
+      });
+
+      keyboardMapper.mapCombination(
+        "ctrl+c",
+        () => {
+          console.log("Ctrl+C");
+        },
+        "scope1"
+      );
+
+      keyboardMapper.mapCombination(
+        "ctrl+z",
+        () => {
+          console.log("Ctrl+Z");
+        },
+        "scope2"
+      );
+
+</code></pre>
 
     <script src="./keymap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-javascript.min.js"></script>
     <script>
       const keyboardMapper = new KeyboardMapper();
 
@@ -106,12 +170,6 @@
         },
         "scope2"
       );
-
-      // Unmap a combination
-      //keyboardMapper.unmapCombination("shift+enter");
-
-      // Destroy the KeyboardMapper instance when no longer needed
-      //keyboardMapper.destroy();
     </script>
   </body>
 </html>
