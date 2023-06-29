@@ -4,12 +4,6 @@ class KeyboardMapper {
     this.activeKeys = new Set();
     this.ignoreInputs = ["INPUT", "SELECT", "TEXTAREA"];
     this.scope = "default";
-
-    //this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleKeyUp = this.handleKeyUp.bind(this);
-
-    document.addEventListener("keydown", this.handleKeyDown.bind(this), true);
-    document.addEventListener("keyup", this.handleKeyUp);
   }
 
   mapCombination(combination, callback, scope = "default") {
@@ -27,6 +21,10 @@ class KeyboardMapper {
     mappings.push({ callback, scope });
 
     // Attach event listener for keydown
+
+    document.addEventListener("keydown", (event) => {
+      this.handleKeyUp.bind(this);
+    });
     document.addEventListener("keydown", (event) => {
       const pressedKey = this.getKeyFromEvent(event).toLowerCase();
       const activeScope = this.getScope();
@@ -100,10 +98,5 @@ class KeyboardMapper {
 
   setScope(scope) {
     this.scope = scope;
-  }
-
-  destroy() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-    document.removeEventListener("keyup", this.handleKeyUp);
   }
 }
