@@ -22,7 +22,7 @@
       <ul>
         <li>Press 0: Log "0 pressed. Changing scope to default."</li>
         <li>Press 1: Log "1 pressed. Changing scope to scope1."</li>
-        <li>Press 2: Log "2 pressed. Changing scope to scope2."</li>
+        <li>Press 2,3,4,5: Log "2 pressed. Changing scope to scope2."</li>
       </ul>
       <li>Default Scope Mappings:</li>
       <ol type="a">
@@ -83,7 +83,7 @@
         console.log("Ctrl+S");
       });
 
-      keyboardMapper.mapCombination("2", () => {
+      keyboardMapper.mapCombination("2,3,4,5", () => {
         console.log("2 pressed. Changing scope to scope2.");
         // Change the scope (optional)
         keyboardMapper.setScope("scope2");
@@ -145,7 +145,7 @@
         console.log("Ctrl+S");
       });
 
-      keyboardMapper.mapCombination("2", () => {
+      keyboardMapper.mapCombination("2,3,4,5", () => {
         console.log("2 pressed. Changing scope to scope2.");
         // Change the scope (optional)
         keyboardMapper.setScope("scope2");

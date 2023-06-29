@@ -6,21 +6,24 @@ class KeyboardMapper {
     this.scope = "default";
   }
 
-  mapCombination(combination, callback, scope = "default") {
-    if (typeof combination !== "string" || typeof callback !== "function") {
+  mapCombination(combinations, callback, scope = "default") {
+    if (typeof combinations !== "string" || typeof callback !== "function") {
       console.error("Invalid combination or callback");
       return;
     }
 
-    const keyCombination = combination.toLowerCase();
-    if (!this.keyMappings.has(keyCombination)) {
-      this.keyMappings.set(keyCombination, []);
-    }
+    const combinationList = combinations
+      .split(",")
+      .map((c) => c.trim().toLowerCase());
 
-    const mappings = this.keyMappings.get(keyCombination);
-    mappings.push({ callback, scope });
+    combinationList.forEach((combination) => {
+      if (!this.keyMappings.has(combination)) {
+        this.keyMappings.set(combination, []);
+      }
 
-    // Attach event listener for keydown
+      const mappings = this.keyMappings.get(combination);
+      mappings.push({ callback, scope });
+    });
 
     document.addEventListener("keydown", (event) => {
       this.handleKeyUp.bind(this);
@@ -29,14 +32,19 @@ class KeyboardMapper {
       const pressedKey = this.getKeyFromEvent(event).toLowerCase();
       const activeScope = this.getScope();
 
-      mappings.forEach((mapping) => {
-        if (
-          (mapping.scope === activeScope || mapping.scope == "default") &&
-          pressedKey === keyCombination
-        ) {
-          event.preventDefault(); // Prevent default browser behavior
-          mapping.callback(event);
-        }
+      combinationList.forEach((combination) => {
+        const mappings = this.keyMappings.get(combination);
+        if (!mappings) return;
+
+        mappings.forEach((mapping) => {
+          if (
+            (mapping.scope === activeScope || mapping.scope === "default") &&
+            pressedKey === combination
+          ) {
+            event.preventDefault();
+            mapping.callback(event);
+          }
+        });
       });
     });
   }
