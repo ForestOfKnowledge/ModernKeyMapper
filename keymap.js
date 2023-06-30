@@ -40,25 +40,31 @@ class KeyboardMapper {
 
     const key = this.getKeyFromEvent(event);
 
+    console.log(key);
+
     this.activeCodes.add(key["codes"][0]);
     this.activeKeys.add(key["result"][0]);
 
-    this.executeCallbacks();
+    this.executeCallbacks(event);
   }
 
   handleKeyUp(event) {
     const key = this.getKeyFromEvent(event);
-    if (this.ignoreInputs.includes(event.target.tagName)) return;
+    //if (this.ignoreInputs.includes(event.target.tagName)) return;
+    console.log(key);
 
-    this.activeCodes.delete(key["codes"][0]);
-    this.activeKeys.delete(key["result"][0]);
+    this.activeKeys.clear();
+    this.activeCodes.clear();
   }
 
-  executeCallbacks() {
+  executeCallbacks(event) {
     const activeKeys = Array.from(this.activeKeys);
     const activeCodes = Array.from(this.activeCodes);
     const activeKeyCombination = activeKeys.join("+");
     const activeCodeCombination = activeCodes.join("+");
+
+    console.log(activeKeyCombination);
+    console.log(activeCodeCombination);
 
     this.keyMappings.forEach((mappings, combination) => {
       const combinationKeys = combination.split("+");
@@ -68,6 +74,7 @@ class KeyboardMapper {
         (activeCodes.length === combinationKeys.length &&
           combinationKeys.every((key) => activeCodes.includes(key)))
       ) {
+        event.preventDefault(); // Prevent default browser behavior
         mappings.forEach((mapping) => {
           const { callback, scope } = mapping;
           if (typeof callback === "function") {
@@ -86,12 +93,16 @@ class KeyboardMapper {
     let result = [];
     let codes = [];
 
-    //if (ctrlKey || metaKey) result.push("ctrl");
-    //if (shiftKey) result.push("shift");
-    //if (altKey) result.push("alt");
-
-    codes.push(code.toLowerCase());
-    result.push(key.toLowerCase());
+    if (key.toLowerCase() == "meta") {
+      result.push("ctrl");
+      codes.push(code.toLowerCase());
+    } else if (key.toLowerCase() == "control") {
+      result.push("ctrl");
+      codes.push(code.toLowerCase());
+    } else {
+      codes.push(code.toLowerCase());
+      result.push(key.toLowerCase());
+    }
 
     let data = { codes: codes, result: result };
 
