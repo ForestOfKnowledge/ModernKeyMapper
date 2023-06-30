@@ -2,55 +2,32 @@ class KeyboardMapper {
   constructor() {
     this.keyMappings = new Map();
     this.activeKeys = new Set();
+    this.activeCodes = new Set();
     this.ignoreInputs = ["INPUT", "SELECT", "TEXTAREA"];
     this.scope = "default";
+
+    document.addEventListener("keydown", this.handleKeyDown.bind(this));
+    document.addEventListener("keyup", this.handleKeyUp.bind(this));
   }
 
-  mapCombination(combinations, callback, scope = "default") {
-    if (typeof combinations !== "string" || typeof callback !== "function") {
+  mapCombination(combination, callback, scope = "default") {
+    if (typeof combination !== "string" || typeof callback !== "function") {
       console.error("Invalid combination or callback");
       return;
     }
 
-    const combinationList = combinations
+    const combinationList = combination
       .split(",")
       .map((c) => c.trim().toLowerCase());
 
-    combinationList.forEach((combination) => {
-      if (!this.keyMappings.has(combination)) {
-        this.keyMappings.set(combination, []);
+    combinationList.forEach((keyCombination) => {
+      if (!this.keyMappings.has(keyCombination)) {
+        this.keyMappings.set(keyCombination, []);
       }
 
-      const mappings = this.keyMappings.get(combination);
+      const mappings = this.keyMappings.get(keyCombination);
       mappings.push({ callback, scope });
     });
-
-    document.addEventListener("keydown", (event) => {
-      this.handleKeyUp.bind(this);
-    });
-    document.addEventListener("keydown", (event) => {
-      const pressedKey = this.getKeyFromEvent(event).toLowerCase();
-      const activeScope = this.getScope();
-
-      combinationList.forEach((combination) => {
-        const mappings = this.keyMappings.get(combination);
-        if (!mappings) return;
-
-        mappings.forEach((mapping) => {
-          if (
-            (mapping.scope === activeScope || mapping.scope === "default") &&
-            pressedKey === combination
-          ) {
-            event.preventDefault();
-            mapping.callback(event);
-          }
-        });
-      });
-    });
-  }
-
-  getScope() {
-    return this.scope;
   }
 
   unmapCombination(combination) {
@@ -62,46 +39,67 @@ class KeyboardMapper {
     if (this.ignoreInputs.includes(event.target.tagName)) return;
 
     const key = this.getKeyFromEvent(event);
-    this.activeKeys.add(key);
+
+    this.activeCodes.add(key["codes"][0]);
+    this.activeKeys.add(key["result"][0]);
 
     this.executeCallbacks();
   }
 
   handleKeyUp(event) {
+    const key = this.getKeyFromEvent(event);
     if (this.ignoreInputs.includes(event.target.tagName)) return;
 
-    const key = this.getKeyFromEvent(event);
-    this.activeKeys.delete(key);
+    this.activeCodes.delete(key["codes"][0]);
+    this.activeKeys.delete(key["result"][0]);
   }
 
   executeCallbacks() {
-    const activeCombination = Array.from(this.activeKeys).join("+");
-    const mappings = this.keyMappings.get(activeCombination);
+    const activeKeys = Array.from(this.activeKeys);
+    const activeCodes = Array.from(this.activeCodes);
+    const activeKeyCombination = activeKeys.join("+");
+    const activeCodeCombination = activeCodes.join("+");
 
-    if (mappings) {
-      mappings.forEach((mapping) => {
-        const { callback, scope } = mapping;
-        if (typeof callback === "function") {
-          const currentScope = this.getScope();
-          if (currentScope === scope || scope === "default") {
-            callback();
+    this.keyMappings.forEach((mappings, combination) => {
+      const combinationKeys = combination.split("+");
+      if (
+        (activeKeys.length === combinationKeys.length &&
+          combinationKeys.every((key) => activeKeys.includes(key))) ||
+        (activeCodes.length === combinationKeys.length &&
+          combinationKeys.every((key) => activeCodes.includes(key)))
+      ) {
+        mappings.forEach((mapping) => {
+          const { callback, scope } = mapping;
+          if (typeof callback === "function") {
+            const currentScope = this.getScope();
+            if (currentScope === scope || scope === "default") {
+              callback();
+            }
           }
-        }
-      });
-    }
+        });
+      }
+    });
   }
 
   getKeyFromEvent(event) {
-    const { key, shiftKey, ctrlKey, altKey, metaKey } = event;
-    let result = "";
+    const { code, key, shiftKey, ctrlKey, altKey, metaKey } = event;
+    let result = [];
+    let codes = [];
 
-    if (ctrlKey || metaKey) result += "ctrl+";
-    if (shiftKey) result += "shift+";
-    if (altKey) result += "alt+";
+    //if (ctrlKey || metaKey) result.push("ctrl");
+    //if (shiftKey) result.push("shift");
+    //if (altKey) result.push("alt");
 
-    result += key.toLowerCase();
+    codes.push(code.toLowerCase());
+    result.push(key.toLowerCase());
 
-    return result;
+    let data = { codes: codes, result: result };
+
+    return data;
+  }
+
+  getScope() {
+    return this.scope;
   }
 
   setScope(scope) {
