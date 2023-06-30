@@ -40,8 +40,6 @@ class KeyboardMapper {
 
     const key = this.getKeyFromEvent(event);
 
-    console.log(key);
-
     this.activeCodes.add(key["codes"][0]);
     this.activeKeys.add(key["result"][0]);
 
@@ -51,7 +49,6 @@ class KeyboardMapper {
   handleKeyUp(event) {
     const key = this.getKeyFromEvent(event);
     //if (this.ignoreInputs.includes(event.target.tagName)) return;
-    console.log(key);
 
     this.activeKeys.clear();
     this.activeCodes.clear();
@@ -62,9 +59,6 @@ class KeyboardMapper {
     const activeCodes = Array.from(this.activeCodes);
     const activeKeyCombination = activeKeys.join("+");
     const activeCodeCombination = activeCodes.join("+");
-
-    console.log(activeKeyCombination);
-    console.log(activeCodeCombination);
 
     this.keyMappings.forEach((mappings, combination) => {
       const combinationKeys = combination.split("+");
