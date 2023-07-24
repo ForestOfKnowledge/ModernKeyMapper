@@ -11,6 +11,10 @@ KeyboardMapper is a Vanilla JavaScript class that provides a simple way to map k
 - Easy-to-use API for mapping combinations and setting scopes.
 - Compatible with modern web browsers.
 
+## Demo
+
+https://modernkeymapper.pages.dev/
+
 ## Usage
 
 ### Installation
