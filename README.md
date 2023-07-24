@@ -1,6 +1,6 @@
 # ModernKeyMapper
 
-KeyboardMapper is a JavaScript class that provides a simple way to map keyboard combinations to specific actions or callbacks in your web application. It allows you to define custom key mappings and handle key events based on different scopes or contexts.
+KeyboardMapper is a Vanilla JavaScript class that provides a simple way to map keyboard combinations to specific actions or callbacks in your web application. It allows you to define custom key mappings and handle key events based on different scopes or contexts.
 
 ## Features
 
